@@ -44,7 +44,7 @@ def main():
     ngrams(n, cleanedText)
     
     #Last line printed will be number of tokens in corpus.
-    print("Tokens in corpus:", len(cleanedText))
+    print("Tokens in corpus:", len(cleanedText.split()))
     return 0
 
 #Function for generating ngram model
@@ -67,7 +67,7 @@ def ngrams(n, text):
         sortedWordDict[y]=wordDict[y]
     sortedKeys = list(sortedWordDict.keys())
     sortedItems = list(sortedWordDict.items())
-    tokenSum = len(tokenList)
+    tokenSum = len(text.split())
     print("Number of tokens: ", tokenSum)
     print("Number of types: ", len(sortedKeys))
     for i in range(0,n):
