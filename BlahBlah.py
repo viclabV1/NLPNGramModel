@@ -7,7 +7,6 @@
 from fileinput import close
 import sys
 import re
-from types import NoneType
 
 #Main function
 def main():
@@ -41,6 +40,7 @@ def main():
     #Put space between words and punctuation
     cleanedText = re.sub(r"([,\.\?\!])", r" \1 ", cleanedText)
     #Call ngram model generator and printer:
+    #print(cleanedText)
     ngrams(n, cleanedText)
     
     #Last line printed will be number of tokens in corpus.
@@ -52,8 +52,9 @@ def ngrams(n, text):
     wordDict = {}
     tokenSum = 0
     #Look at each word
+    #print(text.split())
+    tokenList = list(text)
     for i in text.split():
-            tokenSum += 1
             if i not in wordDict:
                 wordDict[i] = 1
             else:
@@ -66,6 +67,7 @@ def ngrams(n, text):
         sortedWordDict[y]=wordDict[y]
     sortedKeys = list(sortedWordDict.keys())
     sortedItems = list(sortedWordDict.items())
+    tokenSum = len(tokenList)
     print("Number of tokens: ", tokenSum)
     print("Number of types: ", len(sortedKeys))
     for i in range(0,n):
