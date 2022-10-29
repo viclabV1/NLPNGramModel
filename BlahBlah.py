@@ -1,12 +1,15 @@
 #Program Name: N-Gram Generator
 #Author: Victor Paul LaBrie
 #Date: October 19th, 2022
-#Problem: Implement a progra  that will learn an Ngram language model from an
+#Problem: Implement a program that will learn an Ngram language model from an
 #arbitrary number of plain text files.
 
+#imports
 from fileinput import close
+from posixpath import splitext
 import sys
 import re
+
 
 #Main function
 def main():
@@ -35,8 +38,8 @@ def main():
         thisText = thisFile.read().lower()
         allText += thisText
         thisFile.close()
-    #Remove all non alpha-text:
-    cleanedText = re.sub(r"[^a-zA-Z_ \.\,\?\!]", "", allText)
+    #Remove all non alphanumeric-text:
+    cleanedText = re.sub(r"[^a-zA-Z0-9 \.\,\?\!]", "", allText)
     #Put space between words and punctuation
     cleanedText = re.sub(r"([,\.\?\!])", r" \1 ", cleanedText)
     #Call ngram model generator and printer:
@@ -49,29 +52,46 @@ def main():
 
 #Function for generating ngram model
 def ngrams(n, text):
-    wordDict = {}
+    ngramDict = {}
     tokenSum = 0
     #Look at each word
     #print(text.split())
     tokenList = list(text)
-    for i in text.split():
-            if i not in wordDict:
-                wordDict[i] = 1
-            else:
-                wordDict[i] += 1
+    splitText = text.split();
+    #print(splitText)
+    
+    #for ngrams
+    for i in range(0, len(splitText)-n):
+        thisNgram = ""
+        for j in range(i,i+n):
+            thisNgram += splitText[j]
+            thisNgram += " "
+        if thisNgram not in ngramDict:
+            ngramDict[thisNgram] = 1
+        else:
+            ngramDict[thisNgram] += 1
+
+    #for single words
+    # for i in splitText:
+    #         if i not in ngramDict:
+    #             ngramDict[i] = 1
+    #         else:
+    #             ngramDict[i] += 1
             
     #next, we sort the dictionary
-    sortedWordList = sorted(wordDict, key = wordDict.get, reverse=True)
+    sortedWordList = sorted(ngramDict, key = ngramDict.get, reverse=True)
     sortedWordDict = {}
     for y in sortedWordList:
-        sortedWordDict[y]=wordDict[y]
+        sortedWordDict[y]=ngramDict[y]
     sortedKeys = list(sortedWordDict.keys())
     sortedItems = list(sortedWordDict.items())
+    
     tokenSum = len(text.split())
     print("Number of tokens: ", tokenSum)
     print("Number of types: ", len(sortedKeys))
-    for i in range(0,n):
+    for i in range(0,100):
         thisItem = sortedItems[i]
         print(thisItem)
+    
 
 main()
