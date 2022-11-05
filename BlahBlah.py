@@ -5,27 +5,26 @@
 #arbitrary number of plain text files.
 
 #imports
-from fileinput import close
-from posixpath import splitext
 from random import randint
 import sys
 import re
-import this
-import numpy as np
 import random
 
 
 
 #Main function
 def main():
+   
     #First, we need to set this up to get the command line arguments.
     #n and m can be grabbed from the first two arguments
     n = sys.argv[1]
     m = sys.argv[2]
+    
     #Since there can be multiple text files, we can just use list slicing to
     #get the list of text files:
     textFiles = sys.argv[3:]
-    #I will then validate the input:
+   
+    #It will then validate the input:
     if not re.match(r'^[1-9]+[0-9]*$', n):
         raise ValueError("First argument must be a valid integer.")
     if not re.match(r'^[1-9]+[0-9]*$', m):
@@ -33,33 +32,42 @@ def main():
     for txt in textFiles:
         if not re.match(r'.*\.txt', txt):
             raise ValueError("Invalid text file. Text files must end with \".txt\".")
+   
     #Print out values
     print(n,m, *textFiles)
+    #Convert m and n to int
     n = int(n)
     m = int(m)
+
+    #Read all text and put into one string.
     allText = ""
-    #open every file and read into one very long string
     for txt in textFiles:
         thisFile = open(txt)
         thisText = thisFile.read().lower()
         allText += thisText
         thisFile.close()
+    
     #Remove all non alphanumeric-text:
     cleanedText = re.sub(r"[^a-zA-Z0-9 \.\,\?\!]", "", allText)
+
     #Put space between words and ends of sentences, add start of sentence markers
     #Just going to replace punctuation with sentence start and end markers. Will add punctuation after sentence built
     cleanedText = re.sub(r"([\.\?\!])", r" </s> <s> ", cleanedText)
-    #Just gonna get rid of commas
-    cleanedText = re.sub(r"([,])", r" ", cleanedText)
-    #Call ngram model generator and printer:
-    #print(cleanedText)
-    ngramModel, typeCount = ngrams(n, cleanedText)
     
-    sentenceGenerator(m, ngramModel);
-    #Last line printed will be number of tokens in corpus.
+    #Just going to get rid of commas
+    cleanedText = re.sub(r"([,])", r" ", cleanedText)
+    
+    #Call ngram model generator and printer:
+    ngramModel, typeCount = ngrams(n, cleanedText)
+    sentenceGenerator(m, ngramModel)
+
+    #Last lines printed will be number of tokens in corpus and number of n-gram types.
     print("Tokens in corpus:", len(cleanedText.split()))
     print("N-Gram types in corpus:", typeCount)
+    
+    #End
     return 0
+
 
 #Function for generating and printing random sentences
 def sentenceGenerator(m, model):
@@ -134,8 +142,6 @@ def sentenceGenerator(m, model):
         print(thisSentence)
        
 
-      
-
 #Function for generating ngram model
 def ngrams(n, text) -> tuple[list,int]:
     ngramDict = {}
@@ -163,8 +169,9 @@ def ngrams(n, text) -> tuple[list,int]:
     sortedItems = list(sortedGramDict.items())
     
     typeCount = len(sortedKeys)
+    print(sortedItems[::-1])
+    return sortedItems[::-1], typeCount
 
-    return sortedItems, typeCount
-    
 
+#Call main function  
 main()
